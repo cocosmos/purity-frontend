@@ -1,16 +1,19 @@
-import { useColorScheme } from 'react-native'
-import { TamaguiProvider, type TamaguiProviderProps } from 'tamagui'
-import { ToastProvider, ToastViewport } from '@tamagui/toast'
-import { CurrentToast } from './CurrentToast'
-import config from '../tamagui.config'
-export function Provider({ children, ...rest }: Omit<TamaguiProviderProps, 'config'>) {
-  const colorScheme = useColorScheme()
+import { useColorScheme } from "react-native";
+import { TamaguiProvider } from "tamagui";
+import config from "../tamagui.config";
+import { ToastProvider, ToastViewport } from "@tamagui/toast";
+import { PlayerProvider } from "@/contexts/PlayerContext";
+import { CurrentToast } from "./CurrentToast";
+import { FormErrorsProvider } from "@/contexts/FormErrorContext";
+import { APIInterceptorProvider } from "@/contexts/APIInterceptorContext";
+
+export const Provider = ({ children }: { children: React.ReactNode }) => {
+  const colorScheme = useColorScheme();
 
   return (
     <TamaguiProvider
       config={config}
-      defaultTheme={colorScheme === 'dark' ? 'dark' : 'light'}
-      {...rest}
+      defaultTheme={colorScheme === "dark" ? "dark" : "light"}
     >
       <ToastProvider
         swipeDirection="horizontal"
@@ -22,10 +25,16 @@ export function Provider({ children, ...rest }: Omit<TamaguiProviderProps, 'conf
           ]
         }
       >
-        {children}
-        <CurrentToast />
-        <ToastViewport top="$8" left={0} right={0} />
+        <FormErrorsProvider>
+          <APIInterceptorProvider>
+            <PlayerProvider>
+              {children}
+              <CurrentToast />
+              <ToastViewport top="$8" left={0} right={0} />
+            </PlayerProvider>
+          </APIInterceptorProvider>
+        </FormErrorsProvider>
       </ToastProvider>
     </TamaguiProvider>
-  )
-}
+  );
+};

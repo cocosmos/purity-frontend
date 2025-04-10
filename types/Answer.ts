@@ -1,5 +1,3 @@
-
-export interface Player {
-    id: number;
-    username: string;
+export interface Answer {
+  id: number;
 }
