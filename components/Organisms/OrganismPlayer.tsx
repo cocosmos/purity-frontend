@@ -9,12 +9,14 @@ import {
   Dialog,
   Unspaced,
   H4,
+  useMedia,
 } from "tamagui";
 import { usePlayer } from "@/contexts/PlayerContext";
 import { Game } from "@/types/Game";
 import { startGameSession } from "@/api/gameSession";
 import { FormField } from "@/components/FormField";
 import { useFormErrors } from "@/contexts/FormErrorContext";
+import { Platform, Keyboard, KeyboardAvoidingView } from "react-native";
 
 interface OrganismPlayerProps {
   game?: Game | null;
@@ -31,6 +33,7 @@ export const OrganismPlayer = ({
   const { clearFieldErrors } = useFormErrors();
   const [username, setUsername] = useState<string>("");
   const [open, setOpen] = useState(false);
+  const media = useMedia();
 
   const handleCreatePlayer = useCallback(async () => {
     if (!username.trim()) return;
@@ -56,6 +59,7 @@ export const OrganismPlayer = ({
   }, [game, player]);
 
   const handleCloseModal = useCallback(() => {
+    Keyboard.dismiss();
     setOpen(false);
     setGame(null);
     setUsername("");
@@ -64,7 +68,7 @@ export const OrganismPlayer = ({
 
   return (
     <>
-      <Dialog modal open={open} onOpenChange={setOpen} padding="$4">
+      <Dialog modal open={open} onOpenChange={setOpen}>
         <Dialog.Portal>
           <Dialog.Overlay
             key="overlay"
@@ -88,38 +92,52 @@ export const OrganismPlayer = ({
             enterStyle={{ x: 0, y: -20, opacity: 0, scale: 0.9 }}
             exitStyle={{ x: 0, y: 10, opacity: 0, scale: 0.95 }}
             space
+            width={media.sm ? "90%" : "450px"}
+            maxWidth="95%"
+            padding="$3"
           >
-            <Dialog.Title>Create a Player</Dialog.Title>
-            <Dialog.Description>
-              To start playing {game?.name || "this game"}, you need to create a
-              player first.
-            </Dialog.Description>
+            <KeyboardAvoidingView
+              behavior={Platform.OS === "ios" ? "padding" : "height"}
+              style={{ width: "100%" }}
+              keyboardVerticalOffset={100}
+            >
+              <Dialog.Title>Create a Player</Dialog.Title>
+              <Dialog.Description>
+                To start playing {game?.name || "this game"}, you need to create
+                a player first.
+              </Dialog.Description>
 
-            <YStack space="$3" padding="$2">
-              <H4>Enter your username</H4>
-              <FormField
-                name="username"
-                value={username}
-                onChangeText={setUsername}
-                placeholder="Your username"
-                autoCapitalize="none"
-              />
-            </YStack>
+              <YStack space="$3" padding="$2" marginBottom="$3">
+                <H4>Enter your username</H4>
+                <FormField
+                  name="username"
+                  value={username}
+                  onChangeText={setUsername}
+                  placeholder="Your username"
+                  autoCapitalize="none"
+                  autoFocus
+                  onSubmitEditing={
+                    username.trim() ? handleCreatePlayer : undefined
+                  }
+                  returnKeyType="done"
+                />
+              </YStack>
 
-            <XStack alignSelf="flex-end" gap="$3">
-              <Dialog.Close asChild>
-                <Button variant="outlined" onPress={handleCloseModal}>
-                  Cancel
+              <XStack alignSelf="flex-end" gap="$3" marginBottom="$2">
+                <Dialog.Close asChild>
+                  <Button variant="outlined" onPress={handleCloseModal}>
+                    Cancel
+                  </Button>
+                </Dialog.Close>
+                <Button
+                  theme="active"
+                  onPress={handleCreatePlayer}
+                  disabled={!username.trim()}
+                >
+                  Create Player
                 </Button>
-              </Dialog.Close>
-              <Button
-                theme="active"
-                onPress={handleCreatePlayer}
-                disabled={!username.trim()}
-              >
-                Create Player
-              </Button>
-            </XStack>
+              </XStack>
+            </KeyboardAvoidingView>
 
             <Unspaced>
               <Dialog.Close asChild>
