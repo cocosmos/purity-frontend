@@ -105,6 +105,27 @@ export default function GameSessionScreen() {
     [gameSession, answering, clearFieldErrors]
   );
 
+  const handleBooleanAnswer = useCallback(
+    (questionAnswerId: number | null, value: boolean) => {
+      handleAnswer(null, value);
+    },
+    [handleAnswer]
+  );
+
+  const handleMultipleChoiceAnswer = useCallback(
+    (optionId: number) => {
+      handleAnswer(optionId, null);
+    },
+    [handleAnswer]
+  );
+
+  const handleRangeAnswer = useCallback(
+    (questionAnswerId: number | null, value: number) => {
+      handleAnswer(null, value);
+    },
+    [handleAnswer]
+  );
+
   // Helper function to render the appropriate question component
   const renderQuestion = () => {
     const question = gameSession?.current_question;
@@ -114,7 +135,7 @@ export default function GameSessionScreen() {
         return (
           <BooleanQuestion
             question={question}
-            onAnswer={(_, value) => handleAnswer(null, value)}
+            onAnswer={handleBooleanAnswer}
             isAnswering={answering}
           />
         );
@@ -122,7 +143,7 @@ export default function GameSessionScreen() {
         return (
           <MultipleChoiceQuestion
             question={question}
-            onAnswer={(optionId) => handleAnswer(optionId, null)}
+            onAnswer={handleMultipleChoiceAnswer}
             isAnswering={answering}
           />
         );
@@ -137,7 +158,7 @@ export default function GameSessionScreen() {
               question={question}
               minValue={question.min_value}
               maxValue={question.max_value}
-              onAnswer={(_, value) => handleAnswer(null, value)}
+              onAnswer={handleRangeAnswer}
               isAnswering={answering}
             />
           );

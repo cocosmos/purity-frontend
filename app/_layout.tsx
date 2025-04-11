@@ -100,7 +100,7 @@ function RootLayoutNav() {
           }}
         />
 
-        <Stack.Screen
+        {/*         <Stack.Screen
           name="settings"
           options={{
             title: "Settings",
@@ -150,7 +150,7 @@ function RootLayoutNav() {
             animation: "fade",
             headerShown: false,
           }}
-        />
+        /> */}
       </Stack>
     </ThemeProvider>
   );

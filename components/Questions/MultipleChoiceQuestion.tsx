@@ -33,7 +33,6 @@ export function MultipleChoiceQuestion({
             <Button
               size="$4"
               theme={selectedOption === option.id ? "active" : "blue"}
-              disabled={isAnswering}
               onPress={() => {
                 setSelectedOption(option.id);
                 onAnswer(option.id, null);

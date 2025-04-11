@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
   Button,
   Card,
@@ -31,12 +31,10 @@ export const OrganismPlayer = ({
   const { clearFieldErrors } = useFormErrors();
   const [username, setUsername] = useState<string>("");
   const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
 
-  const handleCreatePlayer = async () => {
+  const handleCreatePlayer = useCallback(async () => {
     if (!username.trim()) return;
 
-    setLoading(true);
     try {
       const newPlayer = await createNewPlayer(username);
 
@@ -48,54 +46,25 @@ export const OrganismPlayer = ({
       setOpen(false);
     } catch (error) {
       console.error("Error creating player:", error);
-    } finally {
-      setLoading(false);
     }
-  };
+  }, [username, game, createNewPlayer, onSessionStarted, setOpen]);
 
   useEffect(() => {
     if (game && !player) {
       setOpen(true);
     }
-  }, [game]);
+  }, [game, player]);
 
-  const handleCloseModal = () => {
+  const handleCloseModal = useCallback(() => {
     setOpen(false);
     setGame(null);
     setUsername("");
-    clearFieldErrors(); // Clear any field errors when closing the modal
-  };
-
-  /*   if (player) {
-    return (
-      <Card
-        background="$background"
-        hoverTheme
-        pressTheme
-        padding="$4"
-        borderRadius="$4"
-        width={240}
-        space="$2"
-      >
-        <XStack alignItems="center" space="$2">
-          {player.avatar && (
-            <Image
-              source={{ uri: player.avatar }}
-              width={40}
-              height={40}
-              borderRadius="$8"
-              alt={player.username}
-            />
-          )}
-          <Paragraph fontSize="$5">{player.username}</Paragraph>
-        </XStack>
-      </Card>
-    );
-  } */
+    clearFieldErrors();
+  }, [setOpen, setGame, setUsername, clearFieldErrors]);
 
   return (
     <>
-      <Dialog modal open={open} onOpenChange={setOpen}>
+      <Dialog modal open={open} onOpenChange={setOpen} padding="$4">
         <Dialog.Portal>
           <Dialog.Overlay
             key="overlay"
@@ -138,14 +107,15 @@ export const OrganismPlayer = ({
             </YStack>
 
             <XStack alignSelf="flex-end" gap="$3">
-              <Dialog.Close asChild onPress={handleCloseModal}>
-                <Button variant="outlined">Cancel</Button>
+              <Dialog.Close asChild>
+                <Button variant="outlined" onPress={handleCloseModal}>
+                  Cancel
+                </Button>
               </Dialog.Close>
               <Button
                 theme="active"
-                onPress={() => handleCreatePlayer()}
-                disabled={!username.trim() || loading}
-                loading={loading}
+                onPress={handleCreatePlayer}
+                disabled={!username.trim()}
               >
                 Create Player
               </Button>
@@ -160,7 +130,7 @@ export const OrganismPlayer = ({
                   size="$2"
                   circular
                   icon={<Paragraph>✕</Paragraph>}
-                  onPress={() => handleCloseModal()}
+                  onPress={handleCloseModal}
                 />
               </Dialog.Close>
             </Unspaced>
