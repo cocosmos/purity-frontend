@@ -143,7 +143,7 @@ export const OrganismPlayer = ({
               </Dialog.Close>
               <Button
                 theme="active"
-                onPress={handleCreatePlayer}
+                onPress={() => handleCreatePlayer()}
                 disabled={!username.trim() || loading}
                 loading={loading}
               >
@@ -160,7 +160,7 @@ export const OrganismPlayer = ({
                   size="$2"
                   circular
                   icon={<Paragraph>✕</Paragraph>}
-                  onPress={handleCloseModal}
+                  onPress={() => handleCloseModal()}
                 />
               </Dialog.Close>
             </Unspaced>

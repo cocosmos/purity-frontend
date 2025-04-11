@@ -14,14 +14,22 @@ export function BooleanQuestion({
   isAnswering,
 }: BooleanQuestionProps) {
   return (
-    <XStack justifyContent="space-around" marginTop="$4">
+    <XStack
+      justifyContent="center"
+      alignItems="center"
+      padding="$2"
+      marginTop="$4"
+      gap={"$4"}
+      flexWrap="wrap"
+    >
       <Button
         size="$5"
         theme="green"
         icon={<Check size="$1.5" />}
         disabled={isAnswering}
         onPress={() => onAnswer(null, true)}
-        paddingHorizontal="$8"
+        flexGrow={1}
+        maxW={"250px"}
       >
         True
       </Button>
@@ -31,7 +39,8 @@ export function BooleanQuestion({
         icon={<X size="$1.5" />}
         disabled={isAnswering}
         onPress={() => onAnswer(null, false)}
-        paddingHorizontal="$8"
+        flexGrow={1}
+        maxW={"250px"}
       >
         False
       </Button>

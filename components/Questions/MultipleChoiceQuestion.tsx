@@ -7,6 +7,8 @@ import {
   Paragraph,
   Text,
   Label,
+  Group,
+  Separator,
 } from "tamagui";
 import { Question, Option } from "@/types/Question";
 
@@ -24,43 +26,24 @@ export function MultipleChoiceQuestion({
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
 
   return (
-    <YStack space="$4" marginTop="$4" alignItems="center">
-      <RadioGroup
-        name="options"
-        value={selectedOption?.toString() || ""}
-        onValueChange={(value) => onAnswer(Number(value), null)}
-      >
+    <YStack marginTop="$4" alignItems="center" padding="$2">
+      <Group orientation="vertical" separator={<Separator />}>
         {question.options.map((option) => (
-          <XStack width={300} alignItems="center" space="$4" key={option.id}>
-            <RadioGroup.Item
-              value={option.id.toString()}
-              id={`option-${option.id}`}
+          <Group.Item key={option.id}>
+            <Button
               size="$4"
+              theme={selectedOption === option.id ? "active" : "blue"}
+              disabled={isAnswering}
+              onPress={() => {
+                setSelectedOption(option.id);
+                onAnswer(option.id, null);
+              }}
             >
-              <RadioGroup.Indicator />
-            </RadioGroup.Item>
-
-            <Label size="$4" htmlFor={`option-${option.id}`}>
               {option.label}
-            </Label>
-          </XStack>
+            </Button>
+          </Group.Item>
         ))}
-      </RadioGroup>
-
-      {/*  <Button
-        theme="active"
-        size="$4"
-        marginTop="$2"
-        disabled={isAnswering || selectedOption === null}
-        loading={isAnswering}
-        onPress={() => {
-          if (selectedOption !== null) {
-            onAnswer(selectedOption, null);
-          }
-        }}
-      >
-        Submit Answer
-      </Button> */}
+      </Group>
     </YStack>
   );
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useLocalSearchParams, useRouter, Stack } from "expo-router";
 import {
   YStack,
@@ -66,47 +66,49 @@ export default function GameSessionScreen() {
     };
   }, [id, player]);
 
-  const handleAnswer = async (
-    questionAnswerId: number | null,
-    value: number | boolean | null
-  ) => {
-    if (!gameSession?.current_question || answering) return;
+  const handleAnswer = useCallback(
+    async (questionAnswerId: number | null, value: number | boolean | null) => {
+      if (!gameSession?.current_question || answering) return;
 
-    try {
-      setAnswering(true);
-      clearFieldErrors(); // Clear any existing errors
+      try {
+        setAnswering(true);
+        clearFieldErrors(); // Clear any existing errors
 
-      const { data } = await answerQuestion(
-        gameSession.id,
-        gameSession.current_question.id,
-        questionAnswerId,
-        value
-      );
+        const { data } = await answerQuestion(
+          gameSession.id,
+          gameSession.current_question.id,
+          questionAnswerId,
+          value
+        );
 
-      // Update game session with next question from response
-      setGameSession((prev) => {
-        if (!prev) return null;
+        // Update game session with next question from response
+        setGameSession((prev) => {
+          if (!prev) return null;
 
-        return {
-          ...prev,
-          current_question: data.next_question || null,
-          answered_questions: prev.answered_questions + 1,
-        };
-      });
+          return {
+            ...prev,
+            current_question: data.next_question || null,
+            answered_questions: prev.answered_questions + 1,
+          };
+        });
 
-      // Check if we've completed all questions
-      if (!data.next_question) {
-        setIsCompleted(true);
+        // Check if we've completed all questions
+        if (!data.next_question) {
+          setIsCompleted(true);
+        }
+      } catch (error) {
+        console.error("Error answering question:", error);
+      } finally {
+        setAnswering(false);
       }
-    } catch (error) {
-      console.error("Error answering question:", error);
-    } finally {
-      setAnswering(false);
-    }
-  };
+    },
+    [gameSession, answering, clearFieldErrors]
+  );
 
   // Helper function to render the appropriate question component
-  const renderQuestion = (question: Question) => {
+  const renderQuestion = () => {
+    const question = gameSession?.current_question;
+    if (!question) return null;
     switch (question.type) {
       case QuestionType.BOOLEAN:
         return (
@@ -202,9 +204,9 @@ export default function GameSessionScreen() {
                   marginVertical="$4"
                   borderColor="$accentColor"
                 >
-                  <YStack space="$4">
+                  <YStack space="$4" alignItems="center">
                     <H3>{gameSession.current_question.question}</H3>
-                    {renderQuestion(gameSession.current_question)}
+                    {renderQuestion()}
                   </YStack>
                 </Card>
               )}

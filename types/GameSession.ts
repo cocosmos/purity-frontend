@@ -14,4 +14,5 @@ export interface GameSession {
   current_question: Question | null;
   total_questions: number;
   answered_questions: number;
+  level_name: string;
 }

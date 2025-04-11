@@ -10,6 +10,7 @@ interface PlayerContextType {
   setPlayer: (player: Player | null) => void;
   createNewPlayer: (username: string) => Promise<Player | null>;
   clearPlayer: () => Promise<void>;
+  getPlayerFromApi: (player_id: string) => Promise<void>;
   loading: boolean;
 }
 
@@ -17,6 +18,7 @@ const PlayerContext = createContext<PlayerContextType>({
   player: null,
   setPlayer: () => {},
   createNewPlayer: async () => null,
+  getPlayerFromApi: async () => {},
   loading: true,
   clearPlayer: async () => {},
 });
@@ -56,31 +58,36 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
+  const getPlayerFromApi = async (player_id: string) => {
+    try {
+      const { data } = await getPlayer(player_id); // Replace with actual API call to get player
+      if (!data) {
+        throw new Error("Player not found");
+      }
+      if (data.player) {
+        setPlayer(data.player);
+      } else {
+        throw new Error("Player not found");
+      }
+    } catch (error) {
+      console.error("Error fetching player data:", error);
+      clearPlayer();
+    }
+  };
+
   // Load player from storage on mount
   useEffect(() => {
     const loadPlayer = async () => {
       const storedPlayer = await getData("player");
       if (storedPlayer) {
         setPlayer(JSON.parse(storedPlayer));
+        await getPlayerFromApi(JSON.parse(storedPlayer).id);
       }
       setLoading(false);
-    };
-
-    const getPlayerFromApi = async (player_id: string) => {
-      try {
-        const { data } = await getPlayer(player_id); // Replace with actual API call to get player
-        setPlayer(data.player);
-      } catch (error) {
-        console.error("Error fetching player data:", error);
-        clearPlayer();
-      }
+      // Fetch player data from API if player exists
     };
 
     loadPlayer();
-
-    if (player) {
-      getPlayerFromApi(player.id); // Fetch player data from API if player exists
-    }
   }, []);
 
   // Save player to storage when it changes
@@ -117,7 +124,14 @@ export const PlayerProvider: React.FC<{ children: React.ReactNode }> = ({
 
   return (
     <PlayerContext.Provider
-      value={{ player, setPlayer, createNewPlayer, loading, clearPlayer }}
+      value={{
+        player,
+        setPlayer,
+        createNewPlayer,
+        loading,
+        clearPlayer,
+        getPlayerFromApi,
+      }}
     >
       {children}
     </PlayerContext.Provider>
