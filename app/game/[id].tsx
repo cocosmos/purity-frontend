@@ -11,6 +11,7 @@ import {
   Card,
   ScrollView,
   H3,
+  H4,
 } from "tamagui";
 import { getGameSession, answerQuestion } from "@/api/gameSession";
 import { usePlayer } from "@/contexts/PlayerContext";
@@ -95,6 +96,9 @@ export default function GameSessionScreen() {
         // Check if we've completed all questions
         if (!data.next_question) {
           setIsCompleted(true);
+          if (player) {
+            getPlayerFromApi(player.id); // Refresh player data
+          }
         }
       } catch (error) {
         console.error("Error answering question:", error);
@@ -179,7 +183,12 @@ export default function GameSessionScreen() {
   }
 
   if (isCompleted) {
-    return <GameResultsCard gameSession={gameSession} />;
+    return (
+      <GameResultsCard
+        gameSession={gameSession}
+        setGameSession={setGameSession}
+      />
+    );
   }
 
   return (
@@ -226,7 +235,7 @@ export default function GameSessionScreen() {
                   borderColor="$accentColor"
                 >
                   <YStack space="$4" alignItems="center">
-                    <H3>{gameSession.current_question.question}</H3>
+                    <H4>{gameSession.current_question.question}</H4>
                     {renderQuestion()}
                   </YStack>
                 </Card>

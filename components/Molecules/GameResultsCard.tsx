@@ -22,24 +22,25 @@ interface CategoryScore extends Category {
 
 interface GameResultsCardProps {
   gameSession: GameSession | null;
+  setGameSession: (gameSession: GameSession | null) => void;
 }
 
-export function GameResultsCard({ gameSession }: GameResultsCardProps) {
+export function GameResultsCard({
+  gameSession,
+  setGameSession,
+}: GameResultsCardProps) {
   const [categoryScores, setCategoryScores] = useState<CategoryScore[]>([]);
-  const [loading, setLoading] = useState(false);
 
   // Calculate scores for each category
   useEffect(() => {
     const fetchScores = async () => {
       if (gameSession) {
-        setLoading(true);
         try {
           const { data } = await getGameSessionScores(gameSession.id);
           setCategoryScores(data.categories);
+          setGameSession(data.game_session);
         } catch (error) {
           console.error("Error fetching scores:", error);
-        } finally {
-          setLoading(false);
         }
       }
     };
