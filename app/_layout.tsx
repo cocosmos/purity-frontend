@@ -11,6 +11,7 @@ import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
 import { useTheme } from "tamagui";
 import { Provider } from "@/components/Provider";
+import { LogoutPopover } from "@/components/Molecules/MoleculeLogoutPopover";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -88,6 +89,7 @@ function RootLayoutNav() {
           options={{
             title: "Game Session",
             animation: "slide_from_right",
+            headerRight: () => <LogoutPopover />,
             headerShown: true,
             headerStyle: {
               backgroundColor: theme.background.val,
@@ -95,6 +97,58 @@ function RootLayoutNav() {
             headerTintColor: theme.color.val,
             headerBackTitleVisible: false,
             // We set the specific title and right component inside the screen component
+          }}
+        />
+
+        <Stack.Screen
+          name="settings"
+          options={{
+            title: "Settings",
+            animation: "slide_from_right",
+            headerShown: true,
+            headerStyle: {
+              backgroundColor: theme.background.val,
+            },
+            headerTintColor: theme.color.val,
+            headerBackTitleVisible: false,
+          }}
+        />
+
+        <Stack.Screen
+          name="profile"
+          options={{
+            title: "My Profile",
+            animation: "slide_from_right",
+            headerShown: true,
+            headerStyle: {
+              backgroundColor: theme.background.val,
+            },
+            headerTintColor: theme.color.val,
+            headerBackTitleVisible: false,
+          }}
+        />
+
+        <Stack.Screen
+          name="help"
+          options={{
+            title: "Help & Support",
+            animation: "slide_from_bottom",
+            presentation: "modal",
+            headerShown: true,
+            headerStyle: {
+              backgroundColor: theme.background.val,
+            },
+            headerTintColor: theme.color.val,
+          }}
+        />
+
+        <Stack.Screen
+          name="error"
+          options={{
+            title: "Error",
+            presentation: "modal",
+            animation: "fade",
+            headerShown: false,
           }}
         />
       </Stack>

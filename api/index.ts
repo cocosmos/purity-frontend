@@ -3,7 +3,7 @@ import { useToastController } from "@tamagui/toast";
 import { useFormErrors } from "@/contexts/FormErrorContext";
 
 const axiosInstance = axios.create({
-  baseURL: process.env.EXPO_PUBLIC_API_URL || "http://localhost/api",
+  baseURL: process.env.EXPO_PUBLIC_API_URL,
   headers: {
     "Content-Type": "application/json",
   },

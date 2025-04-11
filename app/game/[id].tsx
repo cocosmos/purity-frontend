@@ -26,7 +26,7 @@ import { GameResultsCard } from "@/components/Molecules/GameResultsCard";
 export default function GameSessionScreen() {
   const { id } = useLocalSearchParams();
   const router = useRouter();
-  const { player } = usePlayer();
+  const { player, getPlayerFromApi } = usePlayer();
   const { clearFieldErrors } = useFormErrors();
   const [gameSession, setGameSession] = useState<GameSession | null>(null);
   const [loading, setLoading] = useState(true);
