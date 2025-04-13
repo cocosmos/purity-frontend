@@ -118,9 +118,8 @@ export function GameResultsCard({
                       <XStack alignItems="center" space="$2">
                         <Image
                           source={{ uri: category.image }}
-                          width={40}
-                          height={40}
-                          borderRadius="$8"
+                          width={60}
+                          height={60}
                           alt={category.name}
                         />
                         <Text fontSize="$4" fontWeight="bold">
