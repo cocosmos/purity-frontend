@@ -119,6 +119,7 @@ export function GameResultsCard({
                         <Image
                           source={{ uri: category.image }}
                           width={60}
+                          height="100%"
                           borderRadius="$2"
                           alt={category.name}
                         />
