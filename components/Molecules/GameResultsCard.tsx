@@ -45,7 +45,7 @@ export function GameResultsCard({
       }
     };
     fetchScores();
-  }, [gameSession]);
+  }, []);
 
   // Calculate total score and max possible score
   const totalScore = categoryScores.reduce(
